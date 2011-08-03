@@ -1,7 +1,3 @@
-require 'test/unit'
-require 'test/unit/testresult'
-Test::Unit.run = true
-
 module Hydra #:nodoc:
   # Hydra class responsible for running test files.
   #
@@ -120,6 +116,9 @@ module Hydra #:nodoc:
     # Run all the Test::Unit Suites in a ruby file
     def run_test_unit_file(file)
       begin
+        require 'test/unit'
+        require 'test/unit/testresult'
+        Test::Unit.run = true
         require file
       rescue LoadError => ex
         trace "#{file} does not exist [#{ex.to_s}]"
