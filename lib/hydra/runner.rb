@@ -159,7 +159,11 @@ module Hydra #:nodoc:
 
       RSpec.instance_variable_set(:@world, nil)
       RSpec.instance_variable_set(:@configuration, nil)
-      result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
+      begin
+        result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
+      rescue ex
+        return ex.to_s
+      end
       hydra_output.rewind
 
       return (result == 1) ? hydra_output.read : ""
