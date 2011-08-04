@@ -162,7 +162,7 @@ module Hydra #:nodoc:
       begin
         result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
       rescue Exception => ex
-        return ex.to_s
+        return ex.to_s + "\n" + ex.backtrace.join("\n")
       end
       hydra_output.rewind
 
