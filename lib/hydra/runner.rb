@@ -153,19 +153,20 @@ module Hydra #:nodoc:
       rescue LoadError => ex
         return ex.to_s
       end
-      hydra_output = StringIO.new
+      @hydra_output ||= StringIO.new
+      @hydra_output.rewind
+      @hydra_output.truncate(0)
 
-      config = [ '-f', 'progress', file ]
-
-      RSpec.world.reset
+      config = [ file ]
+      RSpec.reset
       begin
-        result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
+        result = RSpec::Core::Runner.run(config, $stdout, @hydra_output)
       rescue Exception => ex
         return ex.to_s + "\n" + ex.backtrace.join("\n")
       end
-      hydra_output.rewind
+      @hydra_output.rewind
 
-      return (result == 1) ? hydra_output.read : ""
+      return (result == 1) ? @hydra_output.read : ""
     end
 
     # run all the scenarios in a cucumber feature file
