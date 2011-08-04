@@ -161,7 +161,7 @@ module Hydra #:nodoc:
       RSpec.instance_variable_set(:@configuration, nil)
       begin
         result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
-      rescue ex
+      rescue Exception => ex
         return ex.to_s
       end
       hydra_output.rewind
