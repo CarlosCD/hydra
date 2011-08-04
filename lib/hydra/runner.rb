@@ -166,7 +166,7 @@ module Hydra #:nodoc:
 
       hydra_output.rewind
       output = hydra_output.read.chomp
-      output = "" if output.gsub("\n","") =~ /^\.*$/
+      output = "" if output.gsub("\n","") =~ /^[\.\*]*$/
 
       return output
     end
