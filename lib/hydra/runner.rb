@@ -15,7 +15,7 @@ module Hydra #:nodoc:
     # Boot up a runner. It takes an IO object (generally a pipe from its
     # parent) to send it messages on which files to execute.
     def initialize(opts = {})
-      redirect_output( opts.fetch( :runner_log_file ) { DEFAULT_LOG_FILE } )
+      #redirect_output( opts.fetch( :runner_log_file ) { DEFAULT_LOG_FILE } )
       reg_trap_sighup
 
       @io = opts.fetch(:io) { raise "No IO Object" }
@@ -148,7 +148,6 @@ module Hydra #:nodoc:
       # pull in rspec
       begin
         require 'rspec'
-        require 'hydra/spec/hydra_formatter'
         # Ensure we override rspec's at_exit
         RSpec::Core::Runner.disable_autorun!
       rescue LoadError => ex
@@ -156,19 +155,14 @@ module Hydra #:nodoc:
       end
       hydra_output = StringIO.new
 
-      config = [
-        '-f', 'RSpec::Core::Formatters::HydraFormatter',
-        file
-      ]
+      config = [ '-f', 'progress', file ]
 
       RSpec.instance_variable_set(:@world, nil)
-      RSpec::Core::Runner.run(config, hydra_output, hydra_output)
-
+      RSpec.instance_variable_set(:@configuration, nil)
+      result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
       hydra_output.rewind
-      output = hydra_output.read.chomp
-      output = "" if output.gsub("\n","") =~ /^[\.\*]*$/
 
-      return output
+      return (result == 1) ? hydra_output.read : ""
     end
 
     # run all the scenarios in a cucumber feature file
