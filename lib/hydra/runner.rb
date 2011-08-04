@@ -157,8 +157,7 @@ module Hydra #:nodoc:
 
       config = [ '-f', 'progress', file ]
 
-      RSpec.instance_variable_set(:@world, nil)
-      RSpec.instance_variable_set(:@configuration, nil)
+      RSpec.world.reset
       begin
         result = RSpec::Core::Runner.run(config, hydra_output, hydra_output)
       rescue Exception => ex
