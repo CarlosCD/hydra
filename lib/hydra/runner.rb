@@ -160,7 +160,7 @@ module Hydra #:nodoc:
       config = [ file ]
       RSpec.reset
       begin
-        result = RSpec::Core::Runner.run(config, $stdout, @hydra_output)
+        result = RSpec::Core::Runner.run(config, @hydra_output, @hydra_output)
       rescue Exception => ex
         return ex.to_s + "\n" + ex.backtrace.join("\n")
       end
