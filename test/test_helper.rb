@@ -11,7 +11,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'hydra'
 
 # Since Hydra turns off testing, we have to turn it back on
-Test::Unit.run = false
+#Test::Unit.run = false
 
 class Test::Unit::TestCase
   def target_file
