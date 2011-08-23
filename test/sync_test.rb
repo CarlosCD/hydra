@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
+require 'test_helper'
 
 class SyncTest < Test::Unit::TestCase
   context "with a file to test and a destination to verify" do
@@ -36,6 +36,9 @@ class SyncTest < Test::Unit::TestCase
       assert !File.exists?(File.join(remote, 'test_c.rb')), "C should not be on remote"
       # ensure b is on remote
       assert File.exists?(File.join(remote, 'test_b.rb')),  "B should be on remote"
+
+      $stderr.puts local
+      $stderr.puts remote
 
       Hydra::Sync.new(
         {

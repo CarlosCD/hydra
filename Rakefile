@@ -11,7 +11,8 @@ begin
     gem.homepage = "http://github.com/ngauthier/hydra"
     gem.authors = ["Nick Gauthier"]
     gem.add_development_dependency "shoulda", "= 2.10.3"
-    gem.add_development_dependency "rspec", "= 2.0.0.beta.19"
+    gem.add_development_dependency "rspec", "~> 2.6.0"
+    gem.add_development_dependency "rspec-core", ">= 2.6.4"
     gem.add_development_dependency "cucumber", "= 0.9.2"
     gem.add_development_dependency "therubyracer", "= 0.7.4"
   end
@@ -22,7 +23,7 @@ end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
+  test.libs << 'test'
   test.pattern = 'test/**/*_test.rb'
   test.verbose = true
 end

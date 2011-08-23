@@ -1,7 +1,5 @@
 require 'rubygems'
 require 'test/unit'
-gem 'shoulda', '2.10.3'
-gem 'rspec', '2.0.0.beta.19'
 require 'shoulda'
 require 'tmpdir'
 require "stringio"

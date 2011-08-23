@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
-require File.join(File.dirname(__FILE__), 'fixtures', 'runner_listeners')
-require File.join(File.dirname(__FILE__), 'fixtures', 'master_listeners')
+require 'test_helper'
+require 'fixtures/runner_listeners'
+require 'fixtures/master_listeners'
 
 class MasterTest < Test::Unit::TestCase
   context "with a file to test and a destination to verify" do

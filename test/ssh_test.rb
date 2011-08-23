@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
+require 'test_helper'
 
 class SSHTest < Test::Unit::TestCase
   should "be able to execute a command over ssh" do

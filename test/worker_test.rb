@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
+require 'test_helper'
 
 class WorkerTest < Test::Unit::TestCase
   context "with a file to test and a destination to verify" do

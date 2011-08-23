@@ -7,7 +7,7 @@ module Hydra #:nodoc:
     traceable('SYNC')
     self.class.traceable('SYNC MANY')
 
-    attr_reader :connect, :ssh_opts, :remote_dir
+    attr_reader :connect, :ssh_opts, :remote_dir, :result
 
     # Create a new Sync instance to rsync source from the local machine to a remote worker
     #
@@ -47,6 +47,7 @@ module Hydra #:nodoc:
         'rsync',
         '-avz',
         '--delete',
+        '--timeout=2',
         exclude_opts,
         File.expand_path(@local_dir)+'/',
         "-e \"ssh #{@ssh_opts}\"",
@@ -54,6 +55,7 @@ module Hydra #:nodoc:
       ].join(" ")
       trace rsync_command
       trace `#{rsync_command}`
+      @result = $?.exitstatus
     end
 
     def self.sync_many opts

@@ -71,7 +71,7 @@ module Hydra #:nodoc:
       @verbose = opts.fetch('verbose') { false }
       @autosort = opts.fetch('autosort') { true }
       @sync = opts.fetch('sync') { nil }
-      @environment = opts.fetch('environment') { 'test' }
+      @environment = opts.fetch('environment') { 'test' } || 'test'
       @options = opts.fetch('options') { '' }
 
       if @autosort
@@ -174,15 +174,19 @@ module Hydra #:nodoc:
 
     def boot_ssh_worker(worker)
       sync = Sync.new(worker, @sync, @verbose)
+      if sync.result == 0
+        runners = worker.fetch('runners') { raise "You must specify the number of runners"  }
+        command = worker.fetch('command') {
+          "RAILS_ENV=#{@environment} bundle exec ruby -e \"load 'config/application.rb'; require 'hydra'; Hydra::Worker.new(:io => Hydra::Stdio.new, :runners => #{runners}, :verbose => #{@verbose}, :runner_listeners => \'#{@string_runner_event_listeners}\', :runner_log_file => \'#{@runner_log_file}\', :options => {} );\""
+        }
 
-      runners = worker.fetch('runners') { raise "You must specify the number of runners"  }
-      command = worker.fetch('command') {
-        "RAILS_ENV=#{@environment} ruby -e \"require 'rubygems'; require 'hydra'; Hydra::Worker.new(:io => Hydra::Stdio.new, :runners => #{runners}, :verbose => #{@verbose}, :runner_listeners => \'#{@string_runner_event_listeners}\', :runner_log_file => \'#{@runner_log_file}\' );\""
-      }
-
-      trace "Booting SSH worker"
-      ssh = Hydra::SSH.new("#{sync.ssh_opts} #{sync.connect}", sync.remote_dir, command)
-      return { :io => ssh, :idle => false, :type => :ssh, :connect => sync.connect }
+        trace "Booting SSH worker"
+        trace command
+        ssh = Hydra::SSH.new("#{sync.ssh_opts} #{sync.connect}", sync.remote_dir, command)
+        return { :io => ssh, :idle => false, :type => :ssh, :connect => sync.connect }
+      else
+        false
+      end
     end
 
     def shutdown_all_workers
@@ -204,20 +208,22 @@ module Hydra #:nodoc:
           trace "Listening to #{worker.inspect}"
            if worker.fetch('type') { 'local' }.to_s == 'ssh'
              worker = boot_ssh_worker(worker)
-             @workers << worker
+             @workers << worker if worker
            end
-          while true
-            begin
-              message = worker[:io].gets
-              trace "got message: #{message}"
-              # if it exists and its for me.
-              # SSH gives us back echoes, so we need to ignore our own messages
-              if message and !message.class.to_s.index("Worker").nil?
-                message.handle(self, worker)
+          if worker
+            while true
+              begin
+                message = worker[:io].gets
+                trace "got message: #{message}"
+                # if it exists and its for me.
+                # SSH gives us back echoes, so we need to ignore our own messages
+                if message and !message.class.to_s.index("Worker").nil?
+                  message.handle(self, worker)
+                end
+              rescue IOError
+                trace "lost Worker [#{worker.inspect}]"
+                Thread.exit
               end
-            rescue IOError
-              trace "lost Worker [#{worker.inspect}]"
-              Thread.exit
             end
           end
         end
