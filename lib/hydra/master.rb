@@ -1,4 +1,5 @@
 require 'hydra/hash'
+require 'hydra/config'
 require 'open3'
 require 'hydra/tmpdir'
 require 'erb'
@@ -37,18 +38,7 @@ module Hydra #:nodoc:
       opts.stringify_keys!
       config_file = opts.delete('config') { nil }
       if config_file
-
-        begin
-          config_erb = ERB.new(IO.read(config_file)).result(binding)
-        rescue Exception => e
-          raise(YmlLoadError,"config file was found, but could not be parsed with ERB.\n#{$!.inspect}")
-        end
-
-        begin
-          config_yml = YAML::load(config_erb)
-        rescue StandardError => e
-          raise(YmlLoadError,"config file was found, but could not be parsed.\n#{$!.inspect}")
-        end
+        config_yml = Hydra::Config.load(config_file)
 
         opts.merge!(config_yml.stringify_keys!)
       end

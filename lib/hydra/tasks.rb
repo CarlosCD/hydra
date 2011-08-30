@@ -1,4 +1,6 @@
 require 'open3'
+require 'hydra/config'
+
 module Hydra #:nodoc:
   # Hydra Task Common attributes and methods
   class Task
@@ -227,7 +229,6 @@ module Hydra #:nodoc:
   #     t.verbose = false # optionally set to true for lots of debug messages
   #   end  
   class SyncTask < Hydra::Task
-
     # Create a new SyncTestTask
     def initialize(name = :sync)
       @name = name
@@ -280,7 +281,7 @@ module Hydra #:nodoc:
     def define
       desc "Run #{@name} remotely on all workers"
       task "hydra:remote:#{@name}" do
-        config = YAML.load_file(@config)
+        config = Hydra::Config.load(@config)
         environment = config.fetch('environment') { 'test' }
         workers = config.fetch('workers') { [] }
         workers = workers.select{|w| w['type'] == 'ssh'}

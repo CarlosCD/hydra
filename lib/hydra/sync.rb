@@ -1,4 +1,6 @@
 require 'yaml'
+require 'hydra/config'
+
 module Hydra #:nodoc:
   # Hydra class responsible for delegate work down to workers.
   #
@@ -62,7 +64,8 @@ module Hydra #:nodoc:
       opts.stringify_keys!
       config_file = opts.delete('config') { nil }
       if config_file
-        opts.merge!(YAML.load_file(config_file).stringify_keys!)
+        config_yml = Hydra::Config.load(config_file)
+        opts.merge!(config_yml.stringify_keys!)
       end
       @verbose = opts.fetch('verbose') { false }
       @sync = opts.fetch('sync') { {} }
