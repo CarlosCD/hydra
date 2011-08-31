@@ -1,3 +1,5 @@
+require 'rubygems'
+gem 'test-unit'
 require 'test/unit'
 
 class SyncTest < Test::Unit::TestCase

@@ -2,7 +2,8 @@ PATH
   remote: .
   specs:
     hydra (0.23.3)
-      hydra
+      rake (= 0.8.7)
+      test-unit
 
 GEM
   remote: http://rubygems.org/
@@ -30,6 +31,7 @@ GEM
     rspec-mocks (2.6.0)
     shoulda (2.10.3)
     term-ansicolor (1.0.6)
+    test-unit (2.3.2)
     therubyracer (0.7.4)
 
 PLATFORMS
@@ -40,6 +42,7 @@ DEPENDENCIES
   hydra!
   rake (= 0.8.7)
   rspec (~> 2.6.0)
-  rspec-core (>= 2.6.4)
+  rspec-core (= 2.6.4)
   shoulda (= 2.10.3)
+  test-unit
   therubyracer (= 0.7.4)

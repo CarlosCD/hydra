@@ -116,6 +116,7 @@ module Hydra #:nodoc:
     # Run all the Test::Unit Suites in a ruby file
     def run_test_unit_file(file)
       begin
+        gem 'test-unit'
         require 'test/unit'
         require 'test/unit/testresult'
         Test::Unit.run = true

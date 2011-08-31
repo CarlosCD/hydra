@@ -39,19 +39,19 @@ class RunnerTest < Test::Unit::TestCase
     end
 
     should "run a js lint file and find errors" do
-      runner = Hydra::Runner.new(:io => File.new('/dev/null', 'w'))
+      runner = Hydra::Runner.new(:options => {}, :io => File.new('/dev/null', 'w'))
       results = runner.run_file(javascript_file)
       assert results =~ /Missing semicolon/, results
     end
 
     should "run a json data file and find errors" do
-      runner = Hydra::Runner.new(:io => File.new('/dev/null', 'w'))
+      runner = Hydra::Runner.new(:options => {}, :io => File.new('/dev/null', 'w'))
       results = runner.run_file(json_file)
       assert results =~ /trailing comma/, results
     end
 
     should "run two rspec tests" do
-      runner = Hydra::Runner.new(:io => File.new('/dev/null', 'w'))
+      runner = Hydra::Runner.new(:options => {}, :io => File.new('/dev/null', 'w'))
       runner.run_file(rspec_file)
       assert File.exists?(target_file)
       assert_equal "HYDRA", File.read(target_file)
@@ -65,7 +65,7 @@ class RunnerTest < Test::Unit::TestCase
     end
 
     should "run rspec tests with pending examples" do
-      runner = Hydra::Runner.new(:io => File.new('/dev/null', 'w'))
+      runner = Hydra::Runner.new(:options => {}, :io => File.new('/dev/null', 'w'))
       assert File.exists?(rspec_file_with_pending)
 
       runner.run_file(rspec_file_with_pending)
@@ -82,7 +82,7 @@ class RunnerTest < Test::Unit::TestCase
       # the main test environment
       capture_stderr do # redirect stderr
         pid = Process.fork do
-          runner = Hydra::Runner.new(:io => File.new('/dev/null', 'w'))
+          runner = Hydra::Runner.new(:options => {}, :io => File.new('/dev/null', 'w'))
           runner.run_file(cucumber_feature_file)
           assert File.exists?(target_file)
           assert_equal "HYDRA", File.read(target_file)
@@ -102,7 +102,7 @@ class RunnerTest < Test::Unit::TestCase
       ssh = Hydra::SSH.new(
         'localhost',
         File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')),
-        "ruby -e \"require 'rubygems'; require 'hydra'; Hydra::Runner.new(:io => Hydra::Stdio.new, :verbose => true);\""
+        %{ruby -rrubygems -e "require \\"bundler/setup\\"; require \\"hydra\\"; Hydra::Runner.new(:options => {}, :io => Hydra::Stdio.new, :verbose => true);"}
       )
       assert ssh.gets.is_a?(Hydra::Messages::Runner::RequestFile)
       ssh.write(Hydra::Messages::Worker::RunFile.new(:file => test_file))
@@ -188,7 +188,7 @@ class RunnerTest < Test::Unit::TestCase
 
     def run_the_runner(pipe, listeners = [])
       pipe.identify_as_child
-      Hydra::Runner.new( :io => pipe, :runner_listeners => listeners )
+      Hydra::Runner.new( :io => pipe, :options => {}, :runner_listeners => listeners )
     end
   end
   include RunnerTestHelper

@@ -167,7 +167,7 @@ module Hydra #:nodoc:
       if sync.result == 0
         runners = worker.fetch('runners') { raise "You must specify the number of runners"  }
         command = worker.fetch('command') {
-          "RAILS_ENV=#{@environment} #{bundler? ? "bundle exec" : ""} ruby -e \"require 'hydra'; Hydra::Worker.new(:io => Hydra::Stdio.new, :runners => #{runners}, :verbose => #{@verbose}, :runner_listeners => \'#{@string_runner_event_listeners}\', :runner_log_file => \'#{@runner_log_file}\', :options => {} );\""
+          %{RAILS_ENV=#{@environment} ruby -rrubygems -e "require \\"bundler/setup\\"; require \\"hydra\\"; Hydra::Worker.new(:io => Hydra::Stdio.new, :runners => #{runners}, :verbose => #{@verbose}, :runner_listeners => \\"#{@string_runner_event_listeners}\\", :runner_log_file => \\"#{@runner_log_file}\\", :options => {} );"}
         }
 
         trace "Booting SSH worker"
@@ -177,10 +177,6 @@ module Hydra #:nodoc:
       else
         false
       end
-    end
-
-    def bundler?
-      File.file?('Gemfile')
     end
 
     def shutdown_all_workers

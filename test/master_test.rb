@@ -165,6 +165,7 @@ class MasterTest < Test::Unit::TestCase
           :type => :ssh,
           :connect => 'localhost',
           :directory => remote,
+          :verbose => true,
           :runners => 1
         }],
         :sync => {
@@ -336,7 +337,7 @@ class MasterTest < Test::Unit::TestCase
                 :runners => 1
               }],
               :verbose => false,
-              :runner_log_file => 'invalid-dir/#{runner_log_file}'
+              :runner_log_file => "invalid-dir/#{runner_log_file}"
             )
       end
       Process.waitpid @pid

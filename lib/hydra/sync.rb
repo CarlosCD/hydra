@@ -28,6 +28,7 @@ module Hydra #:nodoc:
       @connect = worker_opts.fetch('connect') { raise "You must specify an SSH connection target" }
       @ssh_opts = worker_opts.fetch('ssh_opts') { "" }
       @remote_dir = worker_opts.fetch('directory') { raise "You must specify a remote directory" }
+      @result = 0
 
       return unless sync_opts
       sync_opts.stringify_keys!
