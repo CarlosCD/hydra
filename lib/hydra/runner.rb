@@ -11,6 +11,8 @@ module Hydra #:nodoc:
     traceable('RUNNER')
 
     DEFAULT_LOG_FILE = 'hydra-runner.log'
+    PING_COUNT_FAILURE_TIME = 5
+    WAIT_BETWEEN_PING = 0.1
 
     # Boot up a runner. It takes an IO object (generally a pipe from its
     # parent) to send it messages on which files to execute.
@@ -102,6 +104,7 @@ module Hydra #:nodoc:
             message.handle(self)
           else
             @io.write Ping.new
+            sleep WAIT_BETWEEN_PING
           end
         rescue IOError => ex
           trace "Runner lost Worker"

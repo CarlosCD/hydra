@@ -273,6 +273,27 @@ class MasterTest < Test::Unit::TestCase
 
         assert_file_exists target_file
       end
+
+      should "not die horribly when the host cannot be reached" do
+        capture_stderr do # redirect stderr
+          @pid = Process.fork do
+            Hydra::Master.new(
+              :files => [test_file],
+              :autosort => false,
+              :listeners => [@master_listener],
+              :runner_listeners => [@runner_listener],
+              :workers => [{
+                :type => :ssh,
+                :connect => 'sdlsdkjfhadsfjsd',
+                :directory => remote_dir_path,
+                :runners => 1
+              }],
+              :verbose => false
+            )
+          end
+        end
+        Process.waitpid @pid
+      end
     end
   end
 

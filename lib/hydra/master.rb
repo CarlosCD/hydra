@@ -201,6 +201,7 @@ module Hydra #:nodoc:
              @workers << worker if worker
            end
           if worker
+            dead_count = 0
             while true
               begin
                 message = worker[:io].gets
@@ -209,6 +210,9 @@ module Hydra #:nodoc:
                 # SSH gives us back echoes, so we need to ignore our own messages
                 if message and !message.class.to_s.index("Worker").nil?
                   message.handle(self, worker)
+                else
+                  dead_count += 1
+                  raise IOError if dead_count > 100
                 end
               rescue IOError
                 trace "lost Worker [#{worker.inspect}]"
