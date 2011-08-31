@@ -28,6 +28,7 @@ module Hydra #:nodoc:
       @connect = worker_opts.fetch('connect') { raise "You must specify an SSH connection target" }
       @ssh_opts = worker_opts.fetch('ssh_opts') { "" }
       @remote_dir = worker_opts.fetch('directory') { raise "You must specify a remote directory" }
+      @timeout = worker_opts.fetch('timeout') { 2 }
       @result = 0
 
       return unless sync_opts
@@ -50,7 +51,7 @@ module Hydra #:nodoc:
         'rsync',
         '-avz',
         '--delete',
-        '--timeout=2',
+        "--timeout=#{@timeout}",
         exclude_opts,
         File.expand_path(@local_dir)+'/',
         "-e \"ssh #{@ssh_opts}\"",
@@ -58,6 +59,7 @@ module Hydra #:nodoc:
       ].join(" ")
       trace rsync_command
       trace `#{rsync_command}`
+
       @result = $?.exitstatus
     end
 
