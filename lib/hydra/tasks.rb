@@ -313,29 +313,9 @@ module Hydra #:nodoc:
     def run_command worker, command
       $stdout.write "==== Hydra Running #{@name} on #{worker['connect']} ====\n"
       ssh_opts = worker.fetch('ssh_opts') { '' }
-      writer, reader, error = popen3("ssh -tt #{ssh_opts} #{worker['connect']} ")
-      writer.write("cd #{worker['directory']}\n")
-      writer.write "echo BEGIN HYDRA\n"
-      writer.write(command + "\r")
-      writer.write "echo END HYDRA\n"
-      writer.write("exit\n")
-      writer.close
-      ignoring = true
-      passed = true
-      while line = reader.gets
-        line.chomp!
-        if line =~ /^rake aborted!$/
-          passed = false
-        end
-        if line =~ /echo END HYDRA$/
-          ignoring = true
-        end
-        $stdout.write "#{worker['connect']}: #{line}\n" unless ignoring
-        if line == 'BEGIN HYDRA'
-          ignoring = false
-        end
-      end
-      passed
+
+      system %{ssh -tt #{ssh_opts} #{worker['connect']} 'cd #{worker['directory']} && #{command}'}
+      $?.exitstatus == 0
     end
   end
 
