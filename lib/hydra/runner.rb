@@ -15,7 +15,7 @@ module Hydra #:nodoc:
     # Boot up a runner. It takes an IO object (generally a pipe from its
     # parent) to send it messages on which files to execute.
     def initialize(opts = {})
-      #redirect_output( opts.fetch( :runner_log_file ) { DEFAULT_LOG_FILE } )
+      redirect_output( opts.fetch( :runner_log_file ) { DEFAULT_LOG_FILE } )
       reg_trap_sighup
 
       @io = opts.fetch(:io) { raise "No IO Object" }
@@ -126,6 +126,7 @@ module Hydra #:nodoc:
         trace "#{file} does not exist [#{ex.to_s}]"
         return ex.to_s
       rescue Exception => ex
+        p ex
         trace "Error requiring #{file} [#{ex.to_s}]"
         return format_ex_in_file(file, ex)
       end
