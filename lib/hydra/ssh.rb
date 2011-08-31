@@ -28,11 +28,5 @@ module Hydra #:nodoc:
     def initialize(connection_options, directory, command)
       @writer, @reader, @error = popen3(%{ssh -tt #{connection_options} 'mkdir -p #{directory} && cd #{directory} && #{command}'})
     end
-
-    # Close the SSH connection
-    def close
-      @writer.write "exit\n"
-      super
-    end
   end
 end

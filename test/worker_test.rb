@@ -36,7 +36,7 @@ class WorkerTest < Test::Unit::TestCase
   module WorkerTestHelper
     def run_the_worker(pipe, num_runners)
       pipe.identify_as_child
-      Hydra::Worker.new({:io => pipe, :runners => num_runners})
+      Hydra::Worker.new({:io => pipe, :runners => num_runners, :options => {}})
     end
 
     def request_a_file_and_verify_completion(pipe, num_runners)

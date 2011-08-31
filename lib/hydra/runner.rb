@@ -40,6 +40,7 @@ module Hydra #:nodoc:
       for sign in [:SIGHUP, :INT]
         trap sign do
           stop
+          exit if @event_listeners.empty?
         end
       end
       @runner_began = true
