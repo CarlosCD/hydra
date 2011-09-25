@@ -11,7 +11,10 @@ module Hydra #:nodoc:
       while true
         begin
           raise IOError unless @reader
-          message = @reader.gets
+          if !@timeout || (result = Kernel.select([@reader], [], [], @timeout))
+            message = @reader.gets
+          end
+          return Message.build(:class => Hydra::Messages::Master::Shutdown) if result == nil
           return nil unless message
           return Message.build(eval(message.chomp))
         rescue SyntaxError, NameError

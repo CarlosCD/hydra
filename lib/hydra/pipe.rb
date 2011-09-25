@@ -31,9 +31,10 @@ module Hydra #:nodoc:
   class Pipe
     include Hydra::MessagingIO
     # Creates a new uninitialized pipe pair.
-    def initialize
+    def initialize(timeout = nil)
       @child_read, @parent_write = IO.pipe
       @parent_read, @child_write = IO.pipe
+      @timeout = timeout
     end
 
     # Identify this side of the pipe as the child.

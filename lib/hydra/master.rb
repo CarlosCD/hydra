@@ -172,7 +172,7 @@ module Hydra #:nodoc:
 
         trace "Booting SSH worker"
         trace command
-        ssh = Hydra::SSH.new("#{sync.ssh_opts} #{sync.connect}", sync.remote_dir, command)
+        ssh = Hydra::SSH.new("#{sync.ssh_opts} #{sync.connect}", sync.remote_dir, command, worker['timeout'])
         return { :io => ssh, :idle => false, :type => :ssh, :connect => sync.connect }
       else
         false

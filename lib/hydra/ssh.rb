@@ -25,7 +25,8 @@ module Hydra #:nodoc:
     #   Hydra::SSH.new('-p 3022 user@server.com', '/home/user/Desktop', 'ls -l')
     # To connect to server.com as user on port 3022, then CD to their desktop, then
     # list all the files.
-    def initialize(connection_options, directory, command)
+    def initialize(connection_options, directory, command, timeout = nil)
+      @timeout = timeout
       @writer, @reader, @error = popen3(%{ssh -tt #{connection_options} 'mkdir -p #{directory} && cd #{directory} && #{command}'})
     end
   end
