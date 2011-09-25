@@ -11,13 +11,14 @@ module Hydra #:nodoc:
       while true
         begin
           raise IOError unless @reader
-          if !@timeout || (result = Kernel.select([@reader], [], [], @timeout))
+          message = nil
+          if result = Kernel.select([@reader], [], [], @timeout)
             message = @reader.gets
           end
           return Message.build(:class => Hydra::Messages::Master::Shutdown) if result == nil
           return nil unless message
           return Message.build(eval(message.chomp))
-        rescue SyntaxError, NameError
+        rescue SyntaxError, NameError, Errno::EBADF
           # uncomment to help catch remote errors by seeing all traffic
           #$stderr.write "Not a message: [#{message.inspect}]\n"
         end

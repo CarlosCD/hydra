@@ -72,6 +72,18 @@ module Hydra #:nodoc:
       # default is one worker that is configured to use a pipe with one runner
       worker_cfg = opts.fetch('workers') { [ { 'type' => 'local', 'runners' => 1} ] }
 
+      # if the number of files to run is equal to or less than the count of local
+      # runners, don't even bother with retmote workers.
+      locals, sshes = worker_cfg.partition { |l| l['type'] == 'local' }
+
+      if !locals.empty?
+        if @files.length <= locals.first['runners']
+          sshes = []
+        end
+      end
+
+      worker_cfg = locals + sshes
+
       trace "Initialized"
       trace "  Files:   (#{@files.inspect})"
       trace "  Workers: (#{worker_cfg.inspect})"
